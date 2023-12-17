@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "369308743277",
+    "project_id": "spriteliang-c334d",
+    "storage_bucket": "spriteliang-c334d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369308743277:android:00f230750e8c2136c23164",
+        "android_client_info": {
+          "package_name": "com.leo.spriteliang"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiDAy6msA-ta-wbvZR2PX2aDvISnMa_HE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
