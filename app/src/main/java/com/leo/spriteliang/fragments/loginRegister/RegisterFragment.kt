@@ -5,11 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.leo.spriteliang.R
+import com.leo.spriteliang.activitys.LoginRegisterActivity
 import com.leo.spriteliang.data.User
 import com.leo.spriteliang.databinding.FragmentRegisterBinding
 import com.leo.spriteliang.util.RegisterValidation
@@ -23,7 +25,7 @@ import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
-    private val Tag = "RegisterFragment"
+    private val TAG = RegisterFragment::class.simpleName
     private val viewModel by viewModels<RegisterViewModel>()
     private lateinit var binding: FragmentRegisterBinding
 
@@ -42,6 +44,8 @@ class RegisterFragment : Fragment() {
         binding.tvDoYouHaveAccount.setOnClickListener {
             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
         }
+
+
         binding.apply {
             buttonRegisterRegister.setOnClickListener {
                 val user = User(
@@ -57,16 +61,18 @@ class RegisterFragment : Fragment() {
             viewModel.register.collect {
                 when (it) {
                     is Resource.Loading -> {
+                        Log.d(TAG, "Loading")
+                        //button circle
                         binding.buttonRegisterRegister.startAnimation()
                     }
 
                     is Resource.Success -> {
-                        Log.d("Test", it.data.toString())
+                        Log.d(TAG, "Success $it.data.toString()")
                         binding.buttonRegisterRegister.revertAnimation()
                     }
 
                     is Resource.Error -> {
-                        Log.e(Tag, it.message.toString())
+                        Log.e(TAG, "Error $it.message.toString()")
                         binding.buttonRegisterRegister.revertAnimation()
                     }
 
