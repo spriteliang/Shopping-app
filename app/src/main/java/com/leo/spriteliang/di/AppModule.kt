@@ -1,5 +1,6 @@
 package com.leo.spriteliang.di
 
+
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
@@ -20,4 +21,6 @@ object AppModule {
     @Provides
     @Singleton
     fun provideFirebaseFirestoreDatabase() = Firebase.firestore
+
+
 }

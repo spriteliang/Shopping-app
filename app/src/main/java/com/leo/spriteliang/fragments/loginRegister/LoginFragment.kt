@@ -10,10 +10,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.leo.spriteliang.R
 import com.leo.spriteliang.activitys.ShoppingActivity
 import com.leo.spriteliang.databinding.FragmentLoginBinding
 import com.leo.spriteliang.databinding.FragmentRegisterBinding
+import com.leo.spriteliang.dialog.setupBottomSheetDialog
 import com.leo.spriteliang.util.Resource
 import com.leo.spriteliang.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,43 +31,70 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding=FragmentLoginBinding.inflate(inflater)
+        binding = FragmentLoginBinding.inflate(inflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.tvDontHaveAccount.setOnClickListener{
+        binding.tvDontHaveAccount.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
 
-    binding.apply {
-        buttonLoginLogin.setOnClickListener{
-            val email=edEmailLogin.text.toString()
-            val password=edPasswordLogin.text.toString()
-            viewModel.login(email,password)
+        binding.apply {
+            buttonLoginLogin.setOnClickListener {
+                val email = edEmailLogin.text.toString()
+                val password = edPasswordLogin.text.toString()
+                viewModel.login(email, password)
+            }
         }
-    }
+        binding.tvForgotPasswordLogin.setOnClickListener {
+            setupBottomSheetDialog { email ->
+                viewModel.resetPassword(email)
+
+            }
+        }
         lifecycleScope.launch {
-            viewModel.login.collect{
-                when(it){
-                    is Resource.Loading ->{
-                         binding.buttonLoginLogin.startAnimation()
+            viewModel.resetPassword.collect {
+                when (it) {
+                    is Resource.Loading -> {
                     }
-                    is Resource.Success ->{
+
+                    is Resource.Success -> {
+                        Snackbar.make(requireView(),"Reset link was send to your email" ,Snackbar.LENGTH_LONG).show()
+                    }
+
+                    is Resource.Error -> {
+                        Snackbar.make(requireView(),"Error : ${it.message} ",Snackbar.LENGTH_LONG).show()
+                    }
+                    else -> Unit
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.login.collect {
+                when (it) {
+                    is Resource.Loading -> {
+                        binding.buttonLoginLogin.startAnimation()
+                    }
+
+                    is Resource.Success -> {
                         binding.buttonLoginLogin.revertAnimation()
-                         Intent(requireActivity(),ShoppingActivity::class.java).also { intent ->
-                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                         startActivity(intent)
-                         }
+                        Intent(requireActivity(), ShoppingActivity::class.java).also { intent ->
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            startActivity(intent)
+                        }
                     }
-                    is Resource.Error ->{
-                        Toast.makeText(requireContext(),it.message,Toast.LENGTH_LONG).show()
+
+                    is Resource.Error -> {
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                         binding.buttonLoginLogin.revertAnimation()
 
                     }
-                    else ->Unit
+
+                    else -> Unit
                 }
             }
         }
